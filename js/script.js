@@ -38,7 +38,7 @@ const onePokemonInfo = (url) => {
 const printPokemon = (data) => {
     const pokeImg = data.sprites.other.home.front_default
     const { name, height, weight, type } = data
-    const pokeType = data.types.map((element) => element.type.name);
+    const pokeType = data.types.map((element) => element.type.name).join(', ');
 
     pokedex.innerHTML += `
         <div class="pokemon" >
