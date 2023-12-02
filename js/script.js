@@ -2,20 +2,19 @@ const pokedex = document.getElementById('app')
 const searchBtn = document.getElementById('searchBtn')
 const prevBtn = document.getElementById('prevBtn')
 const nextBtn = document.getElementById('nextBtn')
+const resetBtn = document.getElementById('resetBtn')
 
 
 const getPokemons = async (url) => {
     try {
         const response = await fetch(url)
         if (!response.ok) {
-            throw new Error('Ha surgido un error.')
-        } const pokemons = await response.json()
-        const { next, previous, results } = pokemons
-        const pagination = [next, previous, results]
-        getInfoPokemons(results)
-        return pagination
+            throw new Error('Error al acceder a la información.', response.status)
+        }
+        const pokemons = await response.json()
+        getInfoPokemons(pokemons.results);
     } catch (error) {
-        console.error(error)
+        console.error('Error', error)
     }
 }
 
@@ -32,31 +31,49 @@ const getInfoPokemons = (results) => {
                 const pokeName = data.name
                 const pokeImg = data.sprites.other.home.front_default
                 const template = `
-            <div class="pokemon">
-                <img src="${pokeImg}" alt="${pokeName}" />
-                <p>${pokeName}</p>
-            </div>`
+                    <div class="pokemon">
+                        <img src="${pokeImg}" alt="${pokeName}" />
+                        <p>${pokeName}</p>
+                    </div>`
                 pokedex.innerHTML += template
+            })
+            .catch((error) => {
+                console.error(error)
             })
     })
 }
 
-// const [next, prev, searchPoke] = pagination
 
-// prevBtn.addEventListener('click', prevPage (prev))
-// const prevPage = (previous) => {
-//     console.log('no existe')
-    
-//     if (!previous) {
-//         console.log('no existe')
-//     } else {
-//         getPokemons(previous)
-//     }
-// }
 
-// const search = (results) => {
-//     console.log(results)
-// }
+let value = 0
+let url = `https://pokeapi.co/api/v2/pokemon?offset=${value}&limit=10`
 
-getPokemons('https://pokeapi.co/api/v2/pokemon?offset=0&limit=10')
+prevBtn.addEventListener('click', () => {
+    if (value <= 0) {
+        alert('Esta es la primera página')
+    } else {
+        pokedex.innerHTML = ''
+        value = value - 10
+        url = `https://pokeapi.co/api/v2/pokemon?offset=${value}&limit=10`
+        getPokemons(url)
+    }
+})
+
+nextBtn.addEventListener('click', () => {
+    if (value >= 1282) {
+        alert('Esta es la última página')
+    } else {
+        pokedex.innerHTML = ''
+        value = value + 10
+        url = `https://pokeapi.co/api/v2/pokemon?offset=${value}&limit=10`
+        getPokemons(url)
+    }
+})
+
+resetBtn.addEventListener('click', () => {
+    location.reload()
+})
+
+
+getPokemons(url)
 
