@@ -1,4 +1,5 @@
 const pokedex = document.getElementById('app')
+const searchInput = document.getElementById('searchInput')
 const searchBtn = document.getElementById('searchBtn')
 const prevBtn = document.getElementById('prevBtn')
 const nextBtn = document.getElementById('nextBtn')
@@ -12,37 +13,43 @@ const getPokemons = async (url) => {
             throw new Error('Error al acceder a la información.', response.status)
         }
         const pokemons = await response.json()
-        getInfoPokemons(pokemons.results);
+        pokemons.results.forEach(pokemon => onePokemonInfo(pokemon.url))
     } catch (error) {
         console.error('Error', error)
     }
 }
 
-const getInfoPokemons = (results) => {
-    results.forEach(pokemon => {
-        fetch(pokemon.url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Ha surgido un error.')
-                }
-                return response.json()
-            })
-            .then(data => {
-                const pokeName = data.name
-                const pokeImg = data.sprites.other.home.front_default
-                const template = `
-                    <div class="pokemon">
-                        <img src="${pokeImg}" alt="${pokeName}" />
-                        <p>${pokeName}</p>
-                    </div>`
-                pokedex.innerHTML += template
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-    })
+const onePokemonInfo = (url) => {
+    fetch(url)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Ha surgido un error.')
+            }
+            return response.json()
+        })
+        .then(data => printPokemons(data))
+        .catch((error) => {
+            console.error(error)
+        })
 }
 
+const printPokemons = (data) => {
+    const pokeName = data.name
+    const pokeImg = data.sprites.other.home.front_default
+    const template = `
+        <div class="pokemon">
+            <img src="${pokeImg}" alt="${pokeName}" />
+            <p>${pokeName}</p>
+        </div>`
+    pokedex.innerHTML += template
+}
+
+searchBtn.addEventListener('click', () => {
+    const findUrl = `https://pokeapi.co/api/v2/pokemon/${searchInput.value}`
+    pokedex.innerHTML=''
+    onePokemonInfo(findUrl)
+    console.log(findUrl)
+})
 
 
 let value = 0
@@ -77,3 +84,21 @@ resetBtn.addEventListener('click', () => {
 
 getPokemons(url)
 
+
+
+
+// const getInfoPokemons = (results) => {
+//     results.forEach(pokemon => {
+//         fetch(pokemon.url)
+//             .then((response) => {
+//                 if (!response.ok) {
+//                     throw new Error('Ha surgido un error.')
+//                 }
+//                 return response.json()
+//             })
+//             .then(data => printPokemons(data))
+//             .catch((error) => {
+//                 console.error(error)
+//             })
+//     })
+// }
