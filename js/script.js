@@ -5,7 +5,6 @@ const prevBtn = document.getElementById('prevBtn')
 const nextBtn = document.getElementById('nextBtn')
 const resetBtn = document.getElementById('resetBtn')
 
-
 const getPokemons = async (url) => {
     try {
         const response = await fetch(url)
@@ -13,7 +12,9 @@ const getPokemons = async (url) => {
             throw new Error('Error al acceder a la información.', response.status)
         }
         const pokemons = await response.json()
-        pokemons.results.forEach(pokemon => onePokemonInfo(pokemon.url))
+        return pokemons.results.forEach(pokemon => {
+            onePokemonInfo(pokemon.url)
+        })
     } catch (error) {
         console.error('Error', error)
     }
@@ -27,13 +28,13 @@ const onePokemonInfo = (url) => {
             }
             return response.json()
         })
-        .then(data => printPokemons(data))
+        .then((data) => printPokemon(data))
         .catch((error) => {
-            console.error(error)
+            console.error('Error:', error)
         })
 }
 
-const printPokemons = (data) => {
+const printPokemon = (data) => {
     const pokeName = data.name
     const pokeImg = data.sprites.other.home.front_default
     const template = `
@@ -44,13 +45,23 @@ const printPokemons = (data) => {
     pokedex.innerHTML += template
 }
 
-searchBtn.addEventListener('click', () => {
-    const findUrl = `https://pokeapi.co/api/v2/pokemon/${searchInput.value}`
-    pokedex.innerHTML=''
+const searchPokemon = () => {
+    const find = `${searchInput.value}`.toLowerCase()
+    const findUrl = `https://pokeapi.co/api/v2/pokemon/${find}`
     onePokemonInfo(findUrl)
-    console.log(findUrl)
-})
+    pokedex.innerHTML = ''
+    searchInput.value = ''
+}
 
+
+searchBtn.addEventListener('click', () => {
+    searchPokemon()
+})
+document.addEventListener('keydown', (press) => {
+    if (press.key === 'Enter' ) {
+        searchPokemon()
+    }
+})
 
 let value = 0
 let url = `https://pokeapi.co/api/v2/pokemon?offset=${value}&limit=10`
