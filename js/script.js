@@ -12,7 +12,7 @@ const getPokemons = async (url) => {
             throw new Error('Error al acceder a la información.', response.status)
         }
         const pokemons = await response.json()
-        return pokemons.results.forEach(pokemon => {
+        pokemons.results.forEach((pokemon) => {
             onePokemonInfo(pokemon.url)
         })
     } catch (error) {
@@ -30,19 +30,45 @@ const onePokemonInfo = (url) => {
         })
         .then((data) => printPokemon(data))
         .catch((error) => {
-            console.error('Error:', error)
+            pokedex.innerHTML = '<span>Pokemon no encontrado</span>'
+            console.error(error)
         })
 }
 
 const printPokemon = (data) => {
-    const pokeName = data.name
     const pokeImg = data.sprites.other.home.front_default
-    const template = `
-        <div class="pokemon">
-            <img src="${pokeImg}" alt="${pokeName}" />
-            <p>${pokeName}</p>
+    const { name, height, weight, type } = data
+    const pokeType = data.types.map((element) => element.type.name);
+
+    pokedex.innerHTML += `
+        <div class="pokemon" >
+            <img src="${pokeImg}" alt="${name}" onclick="showModal(event)"/>
+            <p><span>${name}</span></p>
+            <div class="hidden">
+                <div class="modal">
+                    <button class="cerrar" onclick="hideModal(event)">x</button>
+                    <img src="${pokeImg}" alt="${name}" />
+                    <p><span>${name}</span></p>
+                    <div class="text">
+                        <p>Tipo: ${pokeType}</p>
+                        <p>Altura: ${height}</p>
+                        <p>Peso: ${weight}</p>
+                    </div>
+                </div>
+            </div>
         </div>`
-    pokedex.innerHTML += template
+}
+
+const showModal = (event) => {
+    const pokemonDiv = event.target.parentElement
+    const detail = pokemonDiv.lastElementChild
+    detail.classList.remove('hidden')
+    detail.classList.add('show')
+}
+
+const hideModal = (event) => {
+    event.target.parentElement.parentElement.classList.add('hidden')
+    event.target.parentElement.parentElement.classList.remove('show')
 }
 
 const searchPokemon = () => {
@@ -53,15 +79,17 @@ const searchPokemon = () => {
     searchInput.value = ''
 }
 
-
 searchBtn.addEventListener('click', () => {
     searchPokemon()
 })
 document.addEventListener('keydown', (press) => {
-    if (press.key === 'Enter' ) {
+    if (press.key === 'Enter') {
         searchPokemon()
     }
 })
+
+
+// Paginación
 
 let value = 0
 let url = `https://pokeapi.co/api/v2/pokemon?offset=${value}&limit=10`
@@ -94,22 +122,3 @@ resetBtn.addEventListener('click', () => {
 
 
 getPokemons(url)
-
-
-
-
-// const getInfoPokemons = (results) => {
-//     results.forEach(pokemon => {
-//         fetch(pokemon.url)
-//             .then((response) => {
-//                 if (!response.ok) {
-//                     throw new Error('Ha surgido un error.')
-//                 }
-//                 return response.json()
-//             })
-//             .then(data => printPokemons(data))
-//             .catch((error) => {
-//                 console.error(error)
-//             })
-//     })
-// }
