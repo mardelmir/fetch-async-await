@@ -4,6 +4,10 @@ const searchBtn = document.getElementById('searchBtn')
 const prevBtn = document.getElementById('prevBtn')
 const nextBtn = document.getElementById('nextBtn')
 const resetBtn = document.getElementById('resetBtn')
+const clearBtn = document.getElementById('clearBtn')
+clearBtn.addEventListener('click', () => {
+    localStorage.clear()
+})
 
 const getPokemons = async (url) => {
     try {
@@ -42,9 +46,19 @@ const printPokemon = (data) => {
     const { name, height, weight, id } = data
     const pokeType = data.types.map((element) => element.type.name).join(', ');
 
+    const favInfo = {
+        favId: id,
+        favName: name,
+        favImg: pokeImg,
+        favType: pokeType,
+        favHeight: height,
+        favWeight: weight,
+    }
+    const store = encodeURIComponent(JSON.stringify(favInfo))
+
     pokedex.innerHTML += `
         <div class="pokemon" >
-            <div class="star" onclick="fav(event)"></div>
+            <button class="star" onclick="fav(event,'${store}')"></button>
             <img src="${pokeImg}" alt="${name}" onclick="showModal(event)"/>
             <p><span>${name}</span></p>
             <div class="hidden">
@@ -123,37 +137,41 @@ resetBtn.addEventListener('click', () => {
     location.reload()
 })
 
+
 // Bonus
 
+const fav = (evn, data) => {
+    const decoded = decodeURIComponent(data)
+    const parsed = JSON.parse(decoded)
+    const { favId: id } = parsed
 
-
-const fav = (evn) => {
     evn.target.classList.toggle('fill')
     if (evn.target.classList.contains('fill')) {
-        console.log(evn.target)
-    } else { }
+        favPokemon(parsed)
+    } else { deleteFav(id) }
 }
 
-// const favPokemon = (data) => {
-//     if (!localStorage.fav) {
-//         let arrayPoke = JSON.stringify([data])
-//         localStorage.setItem('fav', arrayPoke)
-//     } else {
-//         let old = JSON.parse(localStorage.fav)
-//         let update = [...old, data]
-//         localStorage.fav = JSON.stringify(update)
-//     }
-// }
+const favPokemon = (objPoke) => {
+    if (!localStorage.fav) {
+        let arrayPoke = JSON.stringify([objPoke])
+        localStorage.setItem('fav', arrayPoke)
+    } else {
+        let old = JSON.parse(localStorage.fav)
+        let update = [...old, objPoke]
+        localStorage.fav = JSON.stringify(update)
+    }
+}
 
-// const printFav = () => {
-//     pokedex.innerHTML = ''
-//     let favStored = JSON.parse(localStorage.fav)
-//     favStored.forEach(element => {
-//         console.log(element)
-//     })
-// }
-const star = document.getElementsByClassName('star')
-
-console.log(star)
+const deleteFav = (id) => {
+    let arrayFav = JSON.parse(localStorage.getItem('fav'))
+    arrayFav.filter(pokemon => {
+        let identificacion = `${id}`
+        if (pokemon.favId == identificacion) {
+            const index = arrayFav.indexOf(pokemon)
+            arrayFav.splice(index, 1)
+            localStorage.fav = JSON.stringify(arrayFav)
+        }
+    })   
+}
 
 getPokemons(url)
