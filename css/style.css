@@ -1,3 +1,4 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css");
 
 body {
   font-family: 'Arial', sans-serif;
@@ -70,10 +71,26 @@ header {
   color: white;
 }
 
+#favBtn {
+  margin: 15px 0px;
+  padding: 11px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #0b54bb;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+  font-size: 13px;
+}
+
 #searchBtn:hover,
 #prevBtn:hover,
 #nextBtn:hover,
-#resetBtn:hover {
+#resetBtn:hover,
+#favBtn:hover {
   opacity: 0.8;
 }
 
@@ -88,7 +105,7 @@ header {
   align-items: center;
   justify-content: center;
   width: 250px;
-  height: 300px;
+  height: 350px;
   padding: 15px;
   text-transform: capitalize;
   font-size: 15px;
@@ -103,13 +120,8 @@ span {
   font-weight: 600;
 }
 
-/* .pokemon:hover {
-  transform: scale(1.05);
-  transition: all .1s linear;
-  cursor: pointer;
-} */
-
 .pokemon img {
+  cursor: pointer;
   width: 250px;
   height: 250px;
 }
@@ -119,15 +131,15 @@ span {
 }
 
 .show {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
 }
 
 .modal {
@@ -161,4 +173,24 @@ span {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.star::after {
+  position: relative;
+  top: 5px;
+  cursor: pointer;
+  color: gold;
+  font-family: 'Bootstrap-icons';
+  font-size: 25px;
+  content: '\F588';
+}
+
+.star.fill::after {
+  position: relative;
+  top: 5px;
+  cursor: pointer;
+  color: gold;
+  font-family: 'Bootstrap-icons';
+  font-size: 25px;
+  content: '\F586';
 }

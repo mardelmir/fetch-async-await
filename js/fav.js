@@ -1,0 +1,6 @@
+const pokedex = document.getElementById('app')
+const searchInput = document.getElementById('searchInput')
+const searchBtn = document.getElementById('searchBtn')
+const prevBtn = document.getElementById('prevBtn')
+const nextBtn = document.getElementById('nextBtn')
+const resetBtn = document.getElementById('resetBtn')

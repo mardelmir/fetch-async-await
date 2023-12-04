@@ -28,7 +28,9 @@ const onePokemonInfo = (url) => {
             }
             return response.json()
         })
-        .then((data) => printPokemon(data))
+        .then((data) => {
+            printPokemon(data);
+        })
         .catch((error) => {
             pokedex.innerHTML = '<span>Pokemon no encontrado</span>'
             console.error(error)
@@ -37,11 +39,12 @@ const onePokemonInfo = (url) => {
 
 const printPokemon = (data) => {
     const pokeImg = data.sprites.other.home.front_default
-    const { name, height, weight, type } = data
+    const { name, height, weight, id } = data
     const pokeType = data.types.map((element) => element.type.name).join(', ');
 
     pokedex.innerHTML += `
         <div class="pokemon" >
+            <div class="star" onclick="fav(event)"></div>
             <img src="${pokeImg}" alt="${name}" onclick="showModal(event)"/>
             <p><span>${name}</span></p>
             <div class="hidden">
@@ -120,5 +123,37 @@ resetBtn.addEventListener('click', () => {
     location.reload()
 })
 
+// Bonus
+
+
+
+const fav = (evn) => {
+    evn.target.classList.toggle('fill')
+    if (evn.target.classList.contains('fill')) {
+        console.log(evn.target)
+    } else { }
+}
+
+// const favPokemon = (data) => {
+//     if (!localStorage.fav) {
+//         let arrayPoke = JSON.stringify([data])
+//         localStorage.setItem('fav', arrayPoke)
+//     } else {
+//         let old = JSON.parse(localStorage.fav)
+//         let update = [...old, data]
+//         localStorage.fav = JSON.stringify(update)
+//     }
+// }
+
+// const printFav = () => {
+//     pokedex.innerHTML = ''
+//     let favStored = JSON.parse(localStorage.fav)
+//     favStored.forEach(element => {
+//         console.log(element)
+//     })
+// }
+const star = document.getElementsByClassName('star')
+
+console.log(star)
 
 getPokemons(url)
